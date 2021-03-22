@@ -1,5 +1,8 @@
 import discord, asyncio, os, platform, sys
 from discord.ext import tasks, commands
+from dotenv import load_dotenv
+# Loads the .env file that resides on the same level as the script.
+load_dotenv()
 import os
 
 client = discord.Client()
