@@ -20,12 +20,8 @@ async def on_message(message):
     await bot.process_commands(message)
 
 #Bot ping
-@bot.command()
+@bot.command(brief='Let you know the real-time latency', description='Oh common, everyone knows about ping!')
 async def ping(ctx):
-    '''
-    Let you know the real-time latency
-    '''
-
     # Get the latency of the bot
     latency = bot.latency  # Included in the Discord.py library
     # Send it to the user
