@@ -1,7 +1,7 @@
 import discord, json, asyncio, os, platform, sys
 from discord.ext import tasks, commands
 from dotenv import load_dotenv
-from json import intents, tag
+
 # Loads the .env file that resides on the same level as the script.
 load_dotenv()
 
