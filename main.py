@@ -7,35 +7,32 @@ load_dotenv()
 
 client = discord.Client()
 
+responses = {
+    "WHAT'S YOUR NAME?": "My name is ChatBot!",
+    "COOKIE": ":cookie:"
+}
+
 
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
 
-
-
 @client.event
-async def on_message(self, message):
-        # we do not want the bot to reply to itself
-        if message.author.id == self.user.id:
-            return
-       
-        else:
-           inp = message.content
-           result = model.predict([bag_of_words(inp, words)])[0]
-           result_index = np.argmax(result)
-           tag = labels[result_index]
-           
-           if result[result_index] > 0.7:
-               for tg in data["intents"]:
-                   if tg['tag'] == tag:
-                       responses = tg['responses']
-                
-               bot_response=random.choice(responses)
-               await message.channel.send(bot_response.format(message))
-           else:
-               await message.channel.send("I didnt get that. Can you explain or try again.".format(message))
+async def on_message(message) :
+    content = message.content.upper()
+    if content in responses:
+        await client.send_message(message.channel, responses[content])  
+    
+
+#@client.event
+#async def on_message(message):
+ #   if message.author == client.user:
+  #      return
+
+   # if message.content.startswith('$hello'):
+    #    await message.channel.send('Hello!')
+
 
 token = os.getenv("DISCORD_BOT_TOKEN")
 client.run(token)
