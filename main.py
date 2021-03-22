@@ -1,10 +1,11 @@
 import os
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
+from discord.ext.commands import help
 from dotenv import load_dotenv
 
 prefix = "liv"
-bot = commands.Bot(command_prefix=prefix)
+bot = commands.Bot(command_prefix=prefix, help_command=None)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
@@ -20,7 +21,7 @@ async def on_message(message):
     await bot.process_commands(message)
 
 #Bot ping
-@bot.command(brief='Let you know the real-time latency', description='Oh common, everyone knows about ping!')
+@bot.command()
 async def ping(ctx):
     # Get the latency of the bot
     latency = bot.latency  # Included in the Discord.py library
@@ -47,7 +48,19 @@ async def on_message(message):
         await message.channel.send('Bả đi ngủ rồi')
         await message.add_reaction("\U0001f642")
 
-
+#Add custom help table content
+@bot.event
+async def on_message(message):
+	if message.content.lower().startswith('livhelp'):
+		commands={}
+		commands['livping']='Show the real-time latency of the server.'
+		commands['livecho']='Liv will chat what you want her to chat.'
+		
+		msg=discord.Embed(title='Livy The Clone', description="Test",color=0x0000ff)
+		for command,description in commands.items():
+			msg.add_field(name=command,value=description, inline=False)
+		msg.add_field(name='Join Our Discord/For Questions/Chilling',value='https://discord.gg/JWSBzyNyg3', inline=False)
+		await bot.send_message(message.channel, embed=msg)
 
 #bot run
 bot.run(TOKEN)
