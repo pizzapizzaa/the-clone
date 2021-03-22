@@ -1,39 +1,45 @@
 import discord, json, asyncio, os, platform, sys
+import random
 from discord.ext import tasks, commands
+from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
-# Loads the .env file that resides on the same level as the script.
+# Loads the token .env file that resides on the same level as the script.
 load_dotenv()
 
-client = discord.Client()
-
-responses = {
-    "WHAT'S YOUR NAME?": "My name is ChatBot!",
-    "COOKIE": ":cookie:"
-}
 
 
+description = '''An example bot to showcase the discord.ext.commands extension
+module.
+There are a number of utility commands being showcased here.'''
 
-@client.event
+intents = discord.Intents.default()
+intents.members = True
+
+#bot = commands.Bot(command_prefix='p', description=description, intents=intents)
+
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('Logged in as')
+    print(bot.user.name)
+    print(bot.user.id)
+    print('------')
 
-@client.event
-async def on_message(message) :
-    content = message.content.upper()
-    if content in responses:
-        await client.send_message(message.channel, responses[content])  
-    
+@bot.event
+async def on_message(message):
+    # we do not want the bot to reply to itself
+    if message.author == bot.user:
+        return
 
-#@client.event
-#async def on_message(message):
- #   if message.author == client.user:
-  #      return
+    if message.content.startswith('!hello'):
+        msg = 'Hello {0.author.mention}'.format(message)
+        await bot.send_message(message.channel, msg)
 
-   # if message.content.startswith('$hello'):
-    #    await message.channel.send('Hello!')
-
-
+#Get token and run the bot
 token = os.getenv("DISCORD_BOT_TOKEN")
-client.run(token)
+bot.run(token)
+
+
+
+
 
