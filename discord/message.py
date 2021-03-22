@@ -3,7 +3,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-2020 Rapptz
+Copyright (c) 2015-present Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -335,6 +335,15 @@ class MessageReference:
         """Optional[:class:`~discord.Message`]: The cached message, if found in the internal message cache."""
         return self._state._get_message(self.message_id)
 
+    @property
+    def jump_url(self):
+        """:class:`str`: Returns a URL that allows the client to jump to the referenced message.
+
+        .. versionadded:: 1.7
+        """
+        guild_id = self.guild_id if self.guild_id is not None else '@me'
+        return 'https://discord.com/channels/{0}/{1.channel_id}/{1.message_id}'.format(guild_id, self)
+
     def __repr__(self):
         return '<MessageReference message_id={0.message_id!r} channel_id={0.channel_id!r} guild_id={0.guild_id!r}>'.format(self)
 
@@ -397,7 +406,7 @@ class Message(Hashable):
         The actual contents of the message.
     nonce
         The value used by the discord guild and the client to verify that the message is successfully sent.
-        This is typically non-important.
+        This is not stored long term within Discord's servers and is only used ephemerally.
     embeds: List[:class:`Embed`]
         A list of embeds the message has.
     channel: Union[:class:`abc.Messageable`]
@@ -406,6 +415,9 @@ class Message(Hashable):
     call: Optional[:class:`CallMessage`]
         The call that the message refers to. This is only applicable to messages of type
         :attr:`MessageType.call`.
+
+        .. deprecated:: 1.7
+
     reference: Optional[:class:`~discord.MessageReference`]
         The message that this message references. This is only applicable to messages of
         type :attr:`MessageType.pins_add`, crossposted messages created by a
@@ -495,6 +507,7 @@ class Message(Hashable):
         self.application = data.get('application')
         self.activity = data.get('activity')
         self.channel = channel
+        self.call = None
         self._edited_timestamp = utils.parse_time(data['edited_timestamp'])
         self.type = try_enum(MessageType, data['type'])
         self.pinned = data['pinned']
@@ -911,6 +924,21 @@ class Message(Hashable):
         if self.type is MessageType.channel_follow_add:
             return '{0.author.name} has added {0.content} to this channel'.format(self)
 
+        if self.type is MessageType.guild_stream:
+            return '{0.author.name} is live! Now streaming {0.author.activity.name}'.format(self)
+
+        if self.type is MessageType.guild_discovery_disqualified:
+            return 'This server has been removed from Server Discovery because it no longer passes all the requirements. Check Server Settings for more details.'
+
+        if self.type is MessageType.guild_discovery_requalified:
+            return 'This server is eligible for Server Discovery again and has been automatically relisted!'
+
+        if self.type is MessageType.guild_discovery_grace_period_initial_warning:
+            return 'This server has failed Discovery activity requirements for 1 week. If this server fails for 4 weeks in a row, it will be automatically removed from Discovery.'
+
+        if self.type is MessageType.guild_discovery_grace_period_final_warning:
+            return 'This server has failed Discovery activity requirements for 3 weeks in a row. If this server fails for 1 more week, it will be removed from Discovery.'
+
     async def delete(self, *, delay=None):
         """|coro|
 
@@ -1234,12 +1262,15 @@ class Message(Hashable):
         """
         await self._state.http.clear_reactions(self.channel.id, self.id)
 
+    @utils.deprecated()
     async def ack(self):
         """|coro|
 
         Marks this message as read.
 
         The user must not be a bot user.
+
+        .. deprecated:: 1.7
 
         Raises
         -------
@@ -1351,7 +1382,6 @@ class PartialMessage(Hashable):
     _exported_names = (
         'jump_url',
         'delete',
-        'edit',
         'publish',
         'pin',
         'unpin',
@@ -1416,3 +1446,102 @@ class PartialMessage(Hashable):
 
         data = await self._state.http.get_message(self.channel.id, self.id)
         return self._state.create_message(channel=self.channel, data=data)
+
+    async def edit(self, **fields):
+        """|coro|
+
+        Edits the message.
+
+        The content must be able to be transformed into a string via ``str(content)``.
+
+        .. versionchanged:: 1.7
+            :class:`discord.Message` is returned instead of ``None`` if an edit took place.
+
+        Parameters
+        -----------
+        content: Optional[:class:`str`]
+            The new content to replace the message with.
+            Could be ``None`` to remove the content.
+        embed: Optional[:class:`Embed`]
+            The new embed to replace the original with.
+            Could be ``None`` to remove the embed.
+        suppress: :class:`bool`
+            Whether to suppress embeds for the message. This removes
+            all the embeds if set to ``True``. If set to ``False``
+            this brings the embeds back if they were suppressed.
+            Using this parameter requires :attr:`~.Permissions.manage_messages`.
+        delete_after: Optional[:class:`float`]
+            If provided, the number of seconds to wait in the background
+            before deleting the message we just edited. If the deletion fails,
+            then it is silently ignored.
+        allowed_mentions: Optional[:class:`~discord.AllowedMentions`]
+            Controls the mentions being processed in this message. If this is
+            passed, then the object is merged with :attr:`~discord.Client.allowed_mentions`.
+            The merging behaviour only overrides attributes that have been explicitly passed
+            to the object, otherwise it uses the attributes set in :attr:`~discord.Client.allowed_mentions`.
+            If no object is passed at all then the defaults given by :attr:`~discord.Client.allowed_mentions`
+            are used instead.
+
+        Raises
+        -------
+        NotFound
+            The message was not found.
+        HTTPException
+            Editing the message failed.
+        Forbidden
+            Tried to suppress a message without permissions or
+            edited a message's content or embed that isn't yours.
+
+        Returns
+        ---------
+        Optional[:class:`Message`]
+            The message that was edited.
+        """
+
+        try:
+            content = fields['content']
+        except KeyError:
+            pass
+        else:
+            if content is not None:
+                fields['content'] = str(content)
+
+        try:
+            embed = fields['embed']
+        except KeyError:
+            pass
+        else:
+            if embed is not None:
+                fields['embed'] = embed.to_dict()
+
+        try:
+            suppress = fields.pop('suppress')
+        except KeyError:
+            pass
+        else:
+             flags = MessageFlags._from_value(0)
+             flags.suppress_embeds = suppress
+             fields['flags'] = flags.value
+
+        delete_after = fields.pop('delete_after', None)
+
+        try:
+            allowed_mentions = fields.pop('allowed_mentions')
+        except KeyError:
+            pass
+        else:
+            if allowed_mentions is not None:
+                if self._state.allowed_mentions is not None:
+                    allowed_mentions = self._state.allowed_mentions.merge(allowed_mentions).to_dict()
+                else:
+                    allowed_mentions = allowed_mentions.to_dict()
+                fields['allowed_mentions'] = allowed_mentions
+
+        if fields:
+            data = await self._state.http.edit_message(self.channel.id, self.id, **fields)
+
+        if delete_after is not None:
+            await self.delete(delay=delete_after)
+
+        if fields:
+            return self._state.create_message(channel=self.channel, data=data)

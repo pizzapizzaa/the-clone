@@ -3,7 +3,7 @@
 """
 The MIT License (MIT)
 
-Copyright (c) 2015-2020 Rapptz
+Copyright (c) 2015-present Rapptz
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -290,12 +290,12 @@ class Member(discord.abc.Messageable, _BaseUser):
 
     def _update_inner_user(self, user):
         u = self._user
-        original = (u.name, u.avatar, u.discriminator)
+        original = (u.name, u.avatar, u.discriminator, u._public_flags)
         # These keys seem to always be available
-        modified = (user['username'], user['avatar'], user['discriminator'])
+        modified = (user['username'], user['avatar'], user['discriminator'], user.get('public_flags', 0))
         if original != modified:
             to_return = User._copy(self._user)
-            u.name, u.avatar, u.discriminator = modified
+            u.name, u.avatar, u.discriminator, u._public_flags = modified
             # Signal to dispatch on_user_update
             return to_return, u
 
@@ -398,7 +398,7 @@ class Member(discord.abc.Messageable, _BaseUser):
         if they have a guild specific nickname then that
         is returned instead.
         """
-        return self.nick if self.nick is not None else self.name
+        return self.nick or self.name
 
     @property
     def activity(self):
@@ -431,11 +431,7 @@ class Member(discord.abc.Messageable, _BaseUser):
         if self._user.mentioned_in(message):
             return True
 
-        for role in message.role_mentions:
-            if self._roles.has(role.id):
-                return True
-
-        return False
+        return any(self._roles.has(role.id) for role in message.role_mentions)
 
     def permissions_in(self, channel):
         """An alias for :meth:`abc.GuildChannel.permissions_for`.
@@ -582,7 +578,7 @@ class Member(discord.abc.Messageable, _BaseUser):
             # nick not present so...
             pass
         else:
-            nick = nick if nick else ''
+            nick = nick or ''
             if self._state.self_id == self.id:
                 await http.change_my_nickname(guild_id, nick, reason=reason)
             else:
@@ -643,7 +639,8 @@ class Member(discord.abc.Messageable, _BaseUser):
         Gives the member a number of :class:`Role`\s.
 
         You must have the :attr:`~Permissions.manage_roles` permission to
-        use this.
+        use this, and the added :class:`Role`\s must appear lower in the list
+        of roles than the highest role of the member.
 
         Parameters
         -----------
@@ -681,7 +678,8 @@ class Member(discord.abc.Messageable, _BaseUser):
         Removes :class:`Role`\s from this member.
 
         You must have the :attr:`~Permissions.manage_roles` permission to
-        use this.
+        use this, and the removed :class:`Role`\s must appear lower in the list
+        of roles than the highest role of the member.
 
         Parameters
         -----------
