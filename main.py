@@ -60,7 +60,7 @@ async def on_message(message):
 		for command,description in commands.items():
 			msg.add_field(name=command,value=description, inline=False)
 		msg.add_field(name='Join Our Discord/For Questions/Chilling',value='https://discord.gg/JWSBzyNyg3', inline=False)
-		await bot.send_message(message.channel, embed=msg)
+		await message.channel.send(embed=msg)
 
 #bot run
 bot.run(TOKEN)
