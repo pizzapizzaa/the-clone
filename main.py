@@ -34,7 +34,24 @@ async def ping(ctx):
 #Bot echo commands
 @bot.command()
 async def echo(ctx, *, content:str):
+    '''
+    echo command help goes here
+    '''
     await ctx.send(content)
+
+
+
+#bot chat test conversation
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if message.content.startswith('Lisa'):
+        await message.channel.send('Bả đi ngủ rồi')
+        await message.add_reaction("\U0001f642")
+
+
 
 #bot run
 bot.run(TOKEN)
