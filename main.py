@@ -28,16 +28,17 @@ async def on_message(message):
 #bot help
 @bot.listen()
 async def on_message(message):
-   if message.content.lower().startswith('livhelp'):
+    if message.content.lower().startswith('livhelp'):
         commands={}
-        commands['livping']='Show the real-time latency of the server.'
-        commands['livecho']='Liv will chat what you want her to chat.'
-
-        msg=discord.Embed(title='Chat with Livy\'s clone', description="Test",color=0x97ebdb)
+        commands['livOwner']='Shows who is the Owners of the Devil Bot'
+        commands['livinvite']='Type &Invite Gives you a link to inv the bot to Your server!'
+        commands['livchat']='Type livchat @mention to send to a friend a message'
+		
+        msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk', description="bux minh",color=0x0000ff)
         for command,description in commands.items():
-            msg.add_field(name=command,value=description, inline=True)
-            #msg.add_field(name='Join Our Discord/For Questions/Chilling',value='https://discord.gg/JWSBzyNyg3', inline=False)
-            await message.channel.send(embed=msg)
+            msg.add_field(name=command,value=description, inline=False)
+        #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
+        await client.send_message(message.channel, embed=msg)
 
 
 #Bot ping
