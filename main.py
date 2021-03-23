@@ -26,7 +26,7 @@ async def ping(ctx):
     # Get the latency of the bot
     latency = bot.latency  # Included in the Discord.py library
     # Send it to the user
-    await ctx.send(latency)
+    await message.channel.send(latency)
 
 #Bot echo commands
 @bot.command()
@@ -34,7 +34,7 @@ async def echo(ctx, *, content:str):
     '''
     echo command help goes here
     '''
-    await ctx.send(content)
+    await message.channel.send(content)
 
 
 
