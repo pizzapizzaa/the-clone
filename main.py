@@ -29,15 +29,15 @@ async def on_message(message):
 @bot.listen()
 async def on_message(message):
    if message.content.lower().startswith('livhelp'):
-        commands=[]
+        commands={}
         commands['livping']='Show the real-time latency of the server.'
         commands['livecho']='Liv will chat what you want her to chat.'
 
         msg=discord.Embed(title='Chat with Livy\'s clone', description="Test",color=0x97ebdb)
         for command,description in commands.items():
-            msg.add_field(name=command,value=description, inline=False)
-            msg.add_field(name='Join Our Discord/For Questions/Chilling',value='https://discord.gg/JWSBzyNyg3', inline=False)
-        await message.channel.send(embed=msg)
+            msg.add_field(name=command,value=description, inline=True)
+            #msg.add_field(name='Join Our Discord/For Questions/Chilling',value='https://discord.gg/JWSBzyNyg3', inline=False)
+            await message.channel.send(embed=msg)
 
 
 #Bot ping
