@@ -1,17 +1,21 @@
 import os
 import discord
 import dotenv
-import worklist
+import json
 from discord.ext import commands, tasks
 from discord.ext.commands import help
 from dotenv import load_dotenv
 
 
+with open('worklist.json') as f:
+    			data = json.load(f)
+
+print(data)
+
 prefix = "liv"
 bot = commands.Bot(command_prefix=prefix, help_command=None)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
-
 
 
 #Bot online message
@@ -20,12 +24,12 @@ async def on_ready():
     print("Livy's clone is online")
 
 
+
 #Bot message history
 @bot.event
 async def on_message(message):
     print("The message's content was", message.content)
     await bot.process_commands(message)
-
 
 #bot helpdesk
 
@@ -36,6 +40,7 @@ async def on_message(message):
         commands={}
         commands['livping']='Type livping and Liv will let you know the real-time latency of the server.'
         commands['livecho']='Type livecho and Liv will chat exactly what you chat.'
+        commands['livpurge']='Type livpurge to delete the recent 50 messages.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk', description='The ultimate guideline to Livy\'s Clone',color=0x16ADAA)
         for command,description in commands.items():
@@ -46,7 +51,7 @@ async def on_message(message):
 #code in-progress
 @bot.listen()
 async def on_message(message):
-    if message.content.lower().startswith('livwork'):
+    if message.content=='livwork':
         commands={}
         commands['livworkall']='Give the complete Livy\'s worklist'
         commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
@@ -61,6 +66,7 @@ async def on_message(message):
         #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
         await message.channel.send(embed=msg)
 
+        
 
 #Bot ping
 @bot.command()
@@ -78,12 +84,6 @@ async def echo(ctx, *, content:str):
     '''
     await ctx.message.delete()
     await ctx.send(content)
-
-#Bot liveworkall command
-@bot.command()
-async def workall(ctx):
-    # Get the latency of the bot
-    await ctx.send(latency)
 
 #bot chat test conversation
 @bot.listen()
@@ -116,6 +116,10 @@ async def purge(ctx, limit=50, member: discord.Member=None):
     await ctx.channel.delete_messages(msg)
     await ctx.send(f"Purged {limit} messages of {member.mention}", delete_after=3)
 
+#Bot liveworkall command
+@bot.command()
+async def workall(ctx):
+    await ctx.send(data)
 
 #bot run
 bot.run(TOKEN)
