@@ -25,16 +25,34 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-#bot help
+#bot helpdesk
+
+#implemented
 @bot.listen()
 async def on_message(message):
     if message.content.lower().startswith('livhelp'):
         commands={}
-        commands['livOwner']='Shows who is the Owners of the server'
-        commands['livinvite']='Type &Invite Gives you a link to inv the bot to this server!'
-        commands['livecho']='Type livecho and Liv will chat exactly what you chat'
+        commands['livping']='Type livping and Liv will let you know the real-time latency of the server.'
+        commands['livecho']='Type livecho and Liv will chat exactly what you chat.'
 		
-        msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk', description="bux minh",color=0x0000ff)
+        msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk', description='The ultimate guideline to Livy\'s Clone',color=0x16ADAA)
+        for command,description in commands.items():
+            msg.add_field(name=command,value=description, inline=False)
+        #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
+        await message.channel.send(embed=msg)
+
+#code in-progress
+@bot.listen()
+async def on_message(message):
+    if message.content.lower().startswith('livwork'):
+        commands={}
+        commands['daily']='Give a set of daily works that needed to be done within the day.'
+        commands['pending']='Give a set of pending works that needed to be done in the future.'
+        commands['design']='Give a list of design works by Livy'
+        commands['profile']='Give a list Livy\'s profiles including Linkedin, Instagram, Github, etc.'
+        commands['bio']='Type livworkbio to read about Livy\'s biography.'
+		
+        msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
         for command,description in commands.items():
             msg.add_field(name=command,value=description, inline=False)
         #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
