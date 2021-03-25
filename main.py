@@ -46,11 +46,12 @@ async def on_message(message):
 async def on_message(message):
     if message.content.lower().startswith('livwork'):
         commands={}
-        commands['daily']='Give a set of daily works that needed to be done within the day.'
-        commands['pending']='Give a set of pending works that needed to be done in the future.'
-        commands['design']='Give a list of design works by Livy'
-        commands['profile']='Give a list Livy\'s profiles including Linkedin, Instagram, Github, etc.'
-        commands['bio']='Type livworkbio to read about Livy\'s biography.'
+        commands['livworkall']='Give the complete Livy\'s worklist'
+        commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
+        commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
+        commands['livworkdesign']='Give a list of design works by Livy'
+        commands['livworkprofile']='Give a list Livy\'s profiles including Linkedin, Instagram, Github, etc.'
+        commands['livworkbio']='Type livworkbio to read about Livy\'s biography.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
         for command,description in commands.items():
