@@ -1,5 +1,7 @@
 import os
 import discord
+import dotenv
+import worklist
 from discord.ext import commands, tasks
 from discord.ext.commands import help
 from dotenv import load_dotenv
@@ -51,7 +53,7 @@ async def on_message(message):
         commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
         commands['livworkdesign']='Give a list of design works by Livy'
         commands['livworkprofile']='Give a list Livy\'s profiles including Linkedin, Instagram, Github, etc.'
-        commands['livworkbio']='Type livworkbio to read about Livy\'s biography.'
+        commands['bio']='Type livworkbio to read about Livy\'s biography.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
         for command,description in commands.items():
@@ -77,7 +79,11 @@ async def echo(ctx, *, content:str):
     await ctx.message.delete()
     await ctx.send(content)
 
-
+#Bot liveworkall command
+@bot.command()
+async def workall(ctx):
+    # Get the latency of the bot
+    await ctx.send(latency)
 
 #bot chat test conversation
 @bot.listen()
