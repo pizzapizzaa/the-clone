@@ -2,15 +2,12 @@ import os
 import discord
 import dotenv
 import json
+import random
+import worklist
 from discord.ext import commands, tasks
 from discord.ext.commands import help
 from dotenv import load_dotenv
 
-
-with open('worklist.json') as f:
-    			data = json.load(f)
-
-print(data)
 
 prefix = "liv"
 bot = commands.Bot(command_prefix=prefix, help_command=None)
@@ -18,22 +15,23 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
 
-#Bot online message
+#BOT ONLINE
 @bot.event
 async def on_ready():
     print("Livy's clone is online")
 
 
 
-#Bot message history
+#BOT MESSAGE HISTORY
 @bot.event
 async def on_message(message):
     print("The message's content was", message.content)
     await bot.process_commands(message)
 
-#bot helpdesk
 
-#implemented
+
+#BOT HELPDESK
+#livehelp
 @bot.listen()
 async def on_message(message):
     if message.content.lower().startswith('livhelp'):
@@ -48,17 +46,16 @@ async def on_message(message):
         #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
         await message.channel.send(embed=msg)
 
-#code in-progress
+#livwork
 @bot.listen()
 async def on_message(message):
     if message.content=='livwork':
         commands={}
-        commands['livworkall']='Give the complete Livy\'s worklist'
-        commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
-        commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
-        commands['livworkdesign']='Give a list of design works by Livy'
-        commands['livworkprofile']='Give a list Livy\'s profiles including Linkedin, Instagram, Github, etc.'
-        commands['bio']='Type livworkbio to read about Livy\'s biography.'
+        commands['livworkall']='Type livworkall will give a complete list of Livy\'s past works'
+        #commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
+        #commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
+        commands['livworkprofile']='Type livworkprofile will give a list Livy\'s work profiles including Linkedin, Instagram, Github, etc.'
+        commands['livworkbio']='Type livworkbio to read about Livy\'s biography.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
         for command,description in commands.items():
@@ -66,7 +63,9 @@ async def on_message(message):
         #msg.add_field(name='Join Ur Discord/For Questions/Chilling',value='https://discord.gg/FS8SMn8', inline=False)
         await message.channel.send(embed=msg)
 
+
         
+#BOT COMMANDS
 
 #Bot ping
 @bot.command()
@@ -84,17 +83,6 @@ async def echo(ctx, *, content:str):
     '''
     await ctx.message.delete()
     await ctx.send(content)
-
-#bot chat test conversation
-@bot.listen()
-async def on_message(message):
-   if message.author == bot.user:
-      return
-   
-   if message.content.startswith('Lisa'):
-       await message.channel.send('Bả đi ngủ rồi')
-       await message.add_reaction("\U0001f642")
-
 
 #bot purge messages
 @bot.command()
@@ -116,10 +104,46 @@ async def purge(ctx, limit=50, member: discord.Member=None):
     await ctx.channel.delete_messages(msg)
     await ctx.send(f"Purged {limit} messages of {member.mention}", delete_after=3)
 
-#Bot liveworkall command
+#All about works command
 @bot.command()
 async def workall(ctx):
-    await ctx.send(data)
+    await ctx.send("Here is a list of my recent works\n ")
+    await ctx.send(worklist.worklistall)
+
+@bot.command()
+async def workprofile(ctx):
+    await ctx.send("Here is a list of my works\'s profiles \n")
+    await ctx.send(worklist.workprofile)
+
+@bot.command()
+async def workbio(ctx):
+    await ctx.send(worklist.workbio)
+
+#JSON DATA LOAD AND SEND SAMPLE
+#@bot.command()
+#async def workall(ctx):
+#    with open('worklist.json') as worklist:
+#    		data = json.load(worklist)
+#    await ctx.send(data)
+
+
+#BOT CHAT CONVERSATION
+#bot chat test conversation
+@bot.listen()
+async def on_message(message):
+    if message.author == bot.user:
+        return
+   
+    if message.content.startswith('Robert'):
+        await message.add_reaction("\U0001f642")
+        await message.channel.send('Robert is my boss and he\'s super cool!')
+
+    if message.content.startswith('hello'):
+        msg = 'Hello {0.author.mention} and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!'.format(message)
+        await message.add_reaction("👋")
+        await message.channel.send(msg)  
+
+
 
 #bot run
 bot.run(TOKEN)
