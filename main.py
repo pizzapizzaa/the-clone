@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 
 prefix = "liv"
-bot = commands.Bot(command_prefix=prefix, help_command=None)
+bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
 load_dotenv()
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 
@@ -33,8 +33,8 @@ async def on_message(message):
 #BOT HELPDESK
 #livehelp
 @bot.listen()
-async def on_message(message):
-    if message.content.lower().startswith('livhelp'):
+async def on_message(message, case_insensitive=True):
+    if message.content=='livhelp':
         commands={}
         commands['livping']='Type livping and Liv will let you know the real-time latency of the server.'
         commands['livecho']='Type livecho and Liv will chat exactly what you chat.'
@@ -48,14 +48,15 @@ async def on_message(message):
 
 #livwork
 @bot.listen()
-async def on_message(message):
+async def on_message(message,case_insensitive=True):
     if message.content=='livwork':
         commands={}
-        commands['livworkall']='Type livworkall will give a complete list of Livy\'s past works'
+        commands['livstart']='Type **livstart** to get started!'
+        commands['livworkall']='Type **livworkall** will give a complete list of Livy\'s past works'
         #commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
         #commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
-        commands['livworkprofile']='Type livworkprofile will give a list Livy\'s work profiles including Linkedin, Instagram, Github, etc.'
-        commands['livworkbio']='Type livworkbio to read about Livy\'s biography.'
+        commands['livworkprofile']='Type **livworkprofile** will give a list Livy\'s work profiles including Linkedin, Instagram, Github, etc.'
+        commands['livworkbio']='Type **livworkbio** to read about Livy\'s biography.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
         for command,description in commands.items():
@@ -66,6 +67,13 @@ async def on_message(message):
 
         
 #BOT COMMANDS
+
+#Getting Started
+@bot.command()
+async def start(message, case_insensitive=True, author=discord.user):
+    msg = 'Hello {0.author.mention} and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!'
+    await message.channel.send(msg)
+    await message.add_reaction('wave')
 
 #Bot ping
 @bot.command()
@@ -133,15 +141,8 @@ async def workbio(ctx):
 async def on_message(message):
     if message.author == bot.user:
         return
-   
-    if message.content.startswith('Robert'):
-        await message.add_reaction("\U0001f642")
-        await message.channel.send('Robert is my boss and he\'s super cool!')
 
-    if message.content.startswith('hello'):
-        msg = 'Hello {0.author.mention} and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!'.format(message)
-        await message.add_reaction("👋")
-        await message.channel.send(msg)  
+    
 
 
 
