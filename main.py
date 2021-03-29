@@ -69,11 +69,16 @@ async def on_message(message,case_insensitive=True):
 #BOT COMMANDS
 
 #Getting Started
-@bot.command()
-async def start(message, case_insensitive=True, author=discord.user):
-    msg = 'Hello {0.author.mention} and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!'
-    await message.channel.send(msg)
-    await message.add_reaction('wave')
+@bot.listen()
+async def on_message(message, case_insensitive=True, author=discord.user):
+    if message.author == bot.user:
+        return
+    
+    if message.content == 'livstart':
+        await message.channel.send("Hello and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!")
+        await message.add_reaction('👋')
+
+
 
 #Bot ping
 @bot.command()
