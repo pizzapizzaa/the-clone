@@ -74,7 +74,7 @@ async def on_message(message, case_insensitive=True, author=discord.user):
     if message.author == bot.user:
         return
     
-    if message.content == 'livstart':
+    if message.content == 'hello' or 'livstart':
         await message.channel.send("Hello and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!")
         await message.add_reaction('👋')
 
@@ -125,7 +125,7 @@ async def workall(ctx):
 
 @bot.command()
 async def workprofile(ctx):
-    await ctx.send("Here is a list of my works\'s profiles \n")
+    await ctx.send("Here is a list of my work\'s profiles \n")
     await ctx.send(worklist.workprofile)
 
 @bot.command()

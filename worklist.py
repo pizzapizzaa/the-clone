@@ -10,9 +10,9 @@ url3
 '''
 
 
-workprofile = '''https://www.linkedin.com/in/huyennguyenthu/
-https://www.instagram.com/olivia.artworks/
-https://github.com/pizzapizzaa
+workprofile = '''Linkedin profile: https://www.linkedin.com/in/huyennguyenthu/
+Instagram for artwork showcases: https://www.instagram.com/livgreen.project/
+Github: https://github.com/pizzapizzaa
 '''
 
 workbio = '''This is my bio
