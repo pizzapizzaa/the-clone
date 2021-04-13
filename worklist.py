@@ -15,7 +15,8 @@ Instagram for artwork showcases: https://www.instagram.com/livgreen.project/
 Github: https://github.com/pizzapizzaa
 '''
 
-workbio = '''This is my bio
-Hi hello
-Ayeee
+workbio = '''a
+a
+a
+a
 '''

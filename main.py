@@ -74,7 +74,7 @@ async def on_message(message, case_insensitive=True, author=discord.user):
     if message.author == bot.user:
         return
     
-    if message.content == 'hello' or 'livstart':
+    if message.content == 'hello':
         await message.channel.send("Hello and thank you for visiting my auto chat box! If you are a first-time visitor, please enter **livwork** so I can give you a quick tour!")
         await message.add_reaction('👋')
 
