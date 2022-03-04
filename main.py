@@ -9,6 +9,7 @@ from discord.ext.commands import help
 from dotenv import load_dotenv
 
 
+
 prefix = "liv"
 bot = commands.Bot(command_prefix=prefix, case_insensitive=True, help_command=None)
 load_dotenv()
@@ -31,7 +32,7 @@ async def on_message(message):
 
 
 #BOT HELPDESK
-#livehelp
+#livhelp
 @bot.listen()
 async def on_message(message, case_insensitive=True):
     if message.content=='livhelp':
@@ -132,24 +133,12 @@ async def workprofile(ctx):
 async def workbio(ctx):
     await ctx.send(worklist.workbio)
 
-#JSON DATA LOAD AND SEND SAMPLE
-#@bot.command()
-#async def workall(ctx):
-#    with open('worklist.json') as worklist:
-#    		data = json.load(worklist)
-#    await ctx.send(data)
 
-
-#BOT CHAT CONVERSATION
-#bot chat test conversation
 @bot.listen()
 async def on_message(message):
     if message.author == bot.user:
         return
 
     
-
-
-
 #bot run
 bot.run(TOKEN)
