@@ -52,11 +52,10 @@ async def on_message(message, case_insensitive=True):
 async def on_message(message,case_insensitive=True):
     if message.content=='livwork':
         commands={}
-        commands['livstart']='Type **livstart** to get started!'
         commands['livworkall']='Type **livworkall** will give a complete list of Livy\'s past works'
         #commands['livworkdaily']='Give a set of daily works that needed to be done within the day.'
         #commands['livworkpending']='Give a set of pending works that needed to be done in the future.'
-        commands['livworkprofile']='Type **livworkprofile** will give a list Livy\'s work profiles including Linkedin, Instagram, Github, etc.'
+        commands['livworkprofile']='Type **livworkprofile** will give a list of Livy\'s work profiles including Linkedin, Instagram, Github, etc.'
         commands['livworkbio']='Type **livworkbio** to read about Livy\'s biography.'
 		
         msg=discord.Embed(title='Chat with Livy\'s Clone Helpdesk - Livy\'s Work', description='A set of commands to know more about Livy\'s works',color=0xFFA500)
